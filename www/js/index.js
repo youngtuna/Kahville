@@ -1,12 +1,15 @@
+// Variables
 var map;
 var service;
 var marker;
 var pos;
 var infowindow;
 
+// Main function that draws the map and other stuff.
 function initialize() 
 {
-
+    
+    // Setting up map options.
     var mapOptions = {
      zoom: 14,
      mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -16,19 +19,24 @@ function initialize()
      mapTypeControl: false,
      };
 
+    // Assign where the map is drawn.
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-    //HTML5 geolocation
+    //Try HTML5 geolocation
     if (navigator.geolocation) 
     {
+       // Get current position.
        navigator.geolocation.getCurrentPosition(function(position) 
        {
+            
             pos = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
 
             infowindow = new google.maps.InfoWindow({map: map,position: pos,content: 'Olet tässä.'});
+           
+            // Radius is 1km for now.
+            var request = {location:pos,radius:1000,keyword: ['cafe']};
 
-            var request = {location:pos,radius:500,keyword: ['cafe']};
-
+            // Center the map to where the user is.
             map.setCenter(pos);
 
             infowindow = new google.maps.InfoWindow();
@@ -47,6 +55,7 @@ function initialize()
     handleNoGeolocation(false);
     }
 
+    // Set markers.
     function callback(results, status) 
     {
       if (status == google.maps.places.PlacesServiceStatus.OK) 
@@ -58,6 +67,7 @@ function initialize()
       }
     }
 
+    // Creates markers.
     function createMarker(place) 
     {
       var placeLoc = place.geometry.location;
@@ -66,6 +76,7 @@ function initialize()
         position: place.geometry.location
       });
 
+    // Displays info when marker is clicked.
     google.maps.event.addListener(marker, 'click', function() 
     {
     infowindow.setContent(place.name);
@@ -74,4 +85,3 @@ function initialize()
 
     }
 }
-google.maps.event.addDomListener(window, 'load', initialize);
